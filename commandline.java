@@ -25,7 +25,7 @@ public class commandline
          System.out.println("type help to show explanation of commands");
          String command = in.nextLine();
 
-         if (command.equals("make payment")) {
+         if (command.equalsIgnoreCase("make payment")) {
         	 System.out.println("enter ammount and owner");
         	 String payment = in.nextLine();
         	 String[] parts = payment.split(" ");
@@ -33,7 +33,7 @@ public class commandline
              String owner = parts[1];
              double ammount = Double.parseDouble(ammountStr);
              machine.pay(owner, ammount);
-         }else if (command.equals("add property")) {
+         }else if (command.equalsIgnoreCase("add property")) {
         	 System.out.println("Enter Address, Postcode, Estimated Market Value, Location, Private Residence(yes/no) and owner(s)");
         	 String payment = in.nextLine();
         	 String[] parts = payment.split(" ");
@@ -46,10 +46,10 @@ public class commandline
              double estMarketVal = Double.parseDouble(emv);
              Property prop = new Property(add, post, estMarketVal, loc, PR, owner);
              propertyList.add(prop);
-         }if (command.equals("my payments")){
+         }if (command.equalsIgnoreCase("my payments")){
         	 
          }
-         else if (command.equals("property payments"))
+         else if (command.equalsIgnoreCase("property payments"))
          { System.out.println("enter address or postcode");
            String property = in.nextLine();
            System.out.println(property);
@@ -66,7 +66,7 @@ public class commandline
             //}
            //}
          }
-         else if (command.equals("owner payments"))
+         else if (command.equalsIgnoreCase("owner payments"))
          {  System.out.println("enter address or postcode");
            String owners = in.nextLine();  
             for(Property p : propertyList){
@@ -78,23 +78,48 @@ public class commandline
             }
             
          }
-         else if (command.equals("overdue payments"))
-         {              
-            
+         // need to add overdue payments to Property arraylist
+         else if (command.equalsIgnoreCase("overdue payments"))
+         { System.out.println("enter address or postcode");
+         String owners = in.nextLine();  
+         for(Property p : propertyList){
+             if(p.owners.toString().equals(owners)){
+                 System.out.println(p.OverduePayments.toString()); 
+             }else {
+             	System.out.println("could not find address");
+             }
          }
-         else if (command.equals("Area pay statistics"))
+         }
+         else if (command.equalsIgnoreCase("Area pay statistics"))
          {  
-            
+        	 System.out.println("enter address or postcode");
+             String owners = in.nextLine();  
+             for(Property p : propertyList){
+                 if(p.owners.toString().equals(owners)){
+                     System.out.println(p.APS.toString()); 
+                 }else {
+                 	System.out.println("could not find address");
+                 }
          }
-         else if (command.equals("test tax changes"))
+         else if (command.equalsIgnoreCase("test tax changes"))
          { for(Property p : propertyList){
-                
+        	 System.out.println("enter address or postcode");
+             String owners = in.nextLine(); 
             }
            
          }
-          else if (command.equals("help"))
+          else if (command.equalsIgnoreCase("help"))
          { 
-          System.out.println("figure it out");
+          System.out.println("COMMAND LIST:");
+          System.out.println("make payment");
+          System.out.println("add property");
+          System.out.println("my payments");
+          System.out.println("property payments");
+          System.out.println("owner payments");
+          System.out.println("overdue payments");
+          System.out.println("Area pay statistics");
+          System.out.println("test tax changes");
+          
          }
       }
    }
