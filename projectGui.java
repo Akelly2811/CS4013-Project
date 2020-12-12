@@ -1,6 +1,10 @@
 package project;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -24,9 +28,29 @@ Project GUI.
 public class projectGui extends Application { 
    String helpStr = "Please Login \n admin user requires name to be admin and password is 1234";
    boolean admin = false;
+   LocalDate myObj = LocalDate.now();
    static ArrayList<Property> propertyList = new ArrayList<Property>();
+   ArrayList<propertyTax> propertyTax = new ArrayList<propertyTax>();
    String outputStr = "";
    Property property;
+   
+   public void LoadProperties() throws IOException
+   {
+   	ArrayList<Property> temp = new ArrayList<Property>();
+   	File Input = new File("Properties.txt");
+   	Scanner in = new Scanner(Input);
+   	while(in.hasNextLine())
+   	{
+   		String x = in.nextLine();
+   		String[] split = x.split(",");
+   		double y = Double.parseDouble(split[3]);
+   		int i = Integer.parseInt(split[6]);
+   		propertyList.add(new Property(split[1], split[2], y, split[4], split[5], split[0]));
+   		propertyTax.add(new propertyTax());
+   	}
+   		in.close();
+   }
+   
    public void start(Stage primaryStage) throws Exception {            
       //creating a Group object 
       Pane group = new Pane(); 
@@ -223,10 +247,10 @@ public class projectGui extends Application {
       	        		Txt1In.setPromptText("Eircode");
       	        		group.getChildren().addAll(Txt1,Txt1In);
       	        	}else if(comboBox.toLowerCase().equals("area pay statistics")) {
-      	        		Txt1.setText("Eircode:");
-      	        		Txt1In.setPromptText("eircode");
+      	        		Txt1.setText("Routing Key:");
+      	        		Txt1In.setPromptText("routing key");
       	        		group.getChildren().addAll(Txt1,Txt1In);
-      	        	}else if(comboBox.toLowerCase().equals("enter a different rate")) {
+      	        	}else if(comboBox.toLowerCase().equals("enter a different rate")) { double tax, double rate,double locationTax,double notPrinciple,double penalty
       	        		Txt1.setText("Rate:");
       	        		Txt1In.setPromptText("rate");
       	        		group.getChildren().addAll(Txt1,Txt1In);
@@ -274,13 +298,29 @@ public class projectGui extends Application {
       	    	if(admin == true) {
       	        	String comboBox = (String) comboBox_0.getValue();
       	        	if(comboBox.toLowerCase().equals("get property tax")) {
-      	        		
+      	        		ArrayList<Property> array = propertyList;
+      	        		ArrayList<String> owners = new ArrayList<>();
+      	        		String payments = "";
+      	        		for(int i = 0; i < array.size(); i++) {
+      	        			String add = array.get(i).getAddress();
+      	        			owners = array.get(i).getOwner();
+      	        			if(add.equals(Txt1In.getText()) || owners.contains(Txt1In.getText())) {
+      	        				output.setText(propertyTax.get(i).toString());
+      	        			}
+      	        		}
+      	        		output.setText(payments);
       	        	}else if(comboBox.toLowerCase().equals("overdue payments")) {
-      	        		
+      	        		ArrayList<Payment> overduePay = new ArrayList<>();
+      	        		String overdue = "";
+      	        		for (int i = 0; i < overduePay.size(); i++) {
+      	        			overdue = overdue + overduePay.get(i);
+      	        		}
+      	        		output.setText(overdue);
       	        	}else if(comboBox.toLowerCase().equals("area pay statistics")) {
-      	        		
+      	        		String back = areaPayStatistics(Txt1In.getText());
+      	        		output.setText(back);
       	        	}else if(comboBox.toLowerCase().equals("enter a different rate")) {
-      	        		
+      	        		compare old tax with new tax
       	        	}
       	        }else {
       	        	String comboBox = (String) comboBox_1.getValue();
@@ -298,7 +338,9 @@ public class projectGui extends Application {
       	        		}
       	        		double ammount = Double.parseDouble(Txt3In.getText());
       	        		property = new Property(Txt1In.getText(), Txt2In.getText(), ammount, Txt4In.getText(), check1, Txt5In.getText());
+      	        		propertyTax tax = new propertyTax();
       	        		propertyList.add(property);
+      	        		propertyTax.add(tax);
       	        		help.setText("Done");
       	        	}else if(comboBox.toLowerCase().equals("my payments")) {
       	        		ArrayList<Property> array = propertyList;
@@ -375,6 +417,35 @@ public class projectGui extends Application {
    			}
    		}
    		return back;
+   }
+   public ArrayList<Payment> overDuePayments(){
+	   ArrayList<Payment> overdue = new ArrayList<>();
+   	for (Property p : propertyList){
+   		if (p.lastPayment.getYear() < myObj.getYear()){
+   			for (Payment q : p.duePayments){
+   				overdue.add(q);
+   			}
+   		}
+   	}
+   	return overdue;
+   }
+   
+   public String areaPayStatistics(String code){
+	   ArrayList<Property> stats = new ArrayList<>();
+	   String statsStr = "";
+	    for (Property p : propertyList){
+	    	if(code.equals((p.postcode).substring(0,3))){
+	    		stats.add(p);
+	    		for(int i = 0; i < stats.size(); i++) {
+	    			statsStr = statsStr + stats.get(i).paymentsToString();
+	    		}
+	    	}
+	    }
+	    return statsStr;
+   }
+   
+   public void testTaxChange(double tax, double rate,double locationTax,double notPrinciple,double penalty){ do this
+   		propertyTax temp = new propertyTax(tax,rate,locationTax,notPrinciple,penalty);
    }
    
    public static void main(String args[]){          
