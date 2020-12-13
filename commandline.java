@@ -1,3 +1,5 @@
+package project;
+
 import java.util.Scanner;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -5,15 +7,15 @@ import java.time.LocalDate;
 /**
    A menu from the vending machine.
 */
-public class commandline2 extends propertySystem
+public class commandline extends propertySystem
 {    
    private Scanner in;
-   ArrayList<Property> propertyList = new ArrayList<Property>();
+   ArrayList<property> propertyList = new ArrayList<property>();
    String input;
    String name;
    boolean loggedIn;
    
-   public commandline2(int ownerNumber)
+   public commandline(int ownerNumber)
    {
       in = new Scanner(System.in);
    }
@@ -26,12 +28,14 @@ public class commandline2 extends propertySystem
 	   ArrayList<String> Login = new ArrayList<String>();
 	   Login = LoadUsers();
 	   boolean more = true;
+	   System.out.println("Please enter your username or enter 'quit' to exit the program: ");
+		  String name = in.nextLine();
 	   while (more)
 	   { 
+		 
     	  while(!loggedIn)
     	  {
-    		  System.out.println("Please enter your username or enter 'quit' to exit the program: ");
-    		  String name = in.nextLine();
+    		  
     		  if(name.equals("quit"))
     		  {
     			  more = false;
@@ -91,17 +95,17 @@ public class commandline2 extends propertySystem
            break;
            
            case "property payments":
-        	   if(!name.equals("Admin"))
+        	  if(!name.equals("Admin"))
         	   {
         		   System.out.println("You do not have Admin privileages, you cannot access this function");
         	   }
         	   else
-        	   {
+        	   { 
         		   System.out.println("enter address or postcode");
         		   String Property = in.nextLine();
         		   System.out.println(Property);
         		   machine.propertyPayments(Property);
-        	   }
+        	  }
            break;
            
            case "owner payments":

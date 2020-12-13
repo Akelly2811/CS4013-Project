@@ -1,3 +1,6 @@
+package project;
+
+import java.util.ArrayList;
 
 /**
  * Write a description of class propertyTax here.
@@ -5,6 +8,7 @@
  * @author (your name)
  * @version (a version number or a date)
  */
+
 public class propertyTax
 {
     double tax = 100;
@@ -12,7 +16,8 @@ public class propertyTax
     double locationTax;
     double notPrinciple = 0;
     double penalty = .07;
-    
+    ArrayList<String> taxes = new ArrayList<String>();
+ 
     public propertyTax(double tax, double rate,double locationTax,double notPrinciple,double penalty)
     {
         tax = 100;
@@ -22,13 +27,20 @@ public class propertyTax
         penalty = .07;
     }
     
-    public propertyTax()
-    {
-    	
-    }
-        
+  
+
+public void setTax(double tax, double rate, double locationTax, double notPrinciple, double penalty) {
+	taxes.add(tax + "," + rate + "," + locationTax + "," + notPrinciple + "," + penalty);
+   }
+   
+public double getTaxes(int parse) {
+	String x = "";
+	String[] split = x.split(",");
+	double y = Double.parseDouble(split[parse]);
+	return y;
+}
     
-    public Payment2 getTax(int missedYears, double estMarketVal, String location, boolean privateResidence)
+    public Payment getTax(int missedYears, double estMarketVal, String location, boolean privateResidence)
     {
         if(estMarketVal < 150000) {
             rate = 0;
@@ -49,6 +61,6 @@ public class propertyTax
         if(!privateResidence) {
             notPrinciple = 100;
         }
-        return new Payment2(tax*(penalty*missedYears), true);
+        return new Payment(tax*(penalty*missedYears), true);
     }
 }
