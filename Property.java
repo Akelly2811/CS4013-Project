@@ -1,4 +1,3 @@
-package project;
 
 /**
  * Keeps track of property data, payments and owners of properties
@@ -164,7 +163,7 @@ public class Property {
         return privateResidence;
     }
     /**
-     * return payments
+     * return arraylist of payments
   	*/
     public ArrayList<Payment> getPayments()
     {

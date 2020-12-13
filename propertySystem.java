@@ -1,4 +1,4 @@
-package project;
+
 /**
  * holds some of the methods that commandline uses.
  *
@@ -13,27 +13,27 @@ public class propertySystem extends Property
     // instance variables - replace the example below with your own
     LocalDate myObj = LocalDate.now();
     propertyTax def = new propertyTax();
-    /**
+	/**
      * initalises defaults
   	*/
     public propertySystem()
     {
     }
-    /**
+	/**
      * initialise local date
   	*/
     public propertySystem(LocalDate a)
     {
         myObj = a;
     }
-    /**
+	/**
      * sets date
   	*/
     public void setDate(LocalDate a)
     {
     	myObj = a;
     }
-    /**
+	/**
      * returns date
   	*/
     public LocalDate getDate()
@@ -48,7 +48,7 @@ public class propertySystem extends Property
       double ammount = Double.parseDouble(payment);
       for (Property p : propertyList)
       {
-        if ((p.getAddress()).equals(locator)|| (p.getPostcode()).equals(locator))
+        if ((p.getAddress()).equals(locator) || (p.getPostcode()).equals(locator))
         {
         	p.pay(ammount, locator);
         }
@@ -65,14 +65,10 @@ public class propertySystem extends Property
         String emv = parts[2];
         String loc = parts[3];
         String PR = parts[4];
-        boolean pr = false;
-        if (PR.contains("y")){pr = true;}
         String owner = parts[5];
         double estMarketVal = Double.parseDouble(emv);
-        Property prop = new Property(add, post, estMarketVal, loc, pr);
-        owners.add(owner);
+        Property prop = new Property(add, post, estMarketVal, loc, PR, owner);
         propertyList.add(prop);
-        System.out.println("Test");
     }
     /**
      * returns the payments for a property
@@ -94,8 +90,9 @@ public class propertySystem extends Property
     {
     	for(int i = 0; i < propertyList.size(); i++)
     	{
-    		if(propertyList.get(i).getOwner().equals(owner))
+    		if(propertyList.get(i).getOwners().contains(owner))
     		{
+    			if(propertyList.get(i).getPayments().size() > 0)
     			System.out.println(propertyList.get(i).paymentsToString());
     		}
     	}
@@ -122,7 +119,7 @@ public class propertySystem extends Property
     {
     	propertyTax temp = new propertyTax();
     }
-    /**
+	/**
      * returns overdue payments
   	*/
     public void overDuePayments(ArrayList<Property> propertyList)
@@ -195,17 +192,16 @@ public class propertySystem extends Property
     		String Locator = split[2];
     		LocalDate date = LocalDate.parse(split[3]);
     		boolean bool = Boolean.parseBoolean(split[4]);
+    		
     		for(int x = 0; x < propertyList.size(); x++)
     		{
     			if(propertyList.get(x).getOwner().equals(owner) && propertyList.get(x).getAddress().equals(Locator))
     			{
-    				System.out.println("Test");
     				propertyList.get(x).getPayments().add(new Payment(amount, owner, date, Locator, bool));
     				
     			}
     			else if(propertyList.get(x).getOwner().equals(owner) && propertyList.get(x).getPostcode().equals(Locator))
     			{
-    				System.out.println("Test");
     				propertyList.get(x).getPayments().add(new Payment(amount, owner, date, Locator, bool));
     			}
 
@@ -219,15 +215,18 @@ public class propertySystem extends Property
   	*/
     public void SaveData(ArrayList<Property> propertyList) throws IOException
     {
-    	FileWriter Properties = new FileWriter("Properties.txt", true);
+    	FileWriter Properties = new FileWriter("Properties.txt", false);
+    	
     	for(int i = 0; i < propertyList.size(); i ++)
     	{
     		Properties.write(propertyList.get(i).toString() + "\n");
     	}
+    	
     	Properties.flush();
     	Properties.close();
     	
     	FileWriter Payments = new FileWriter("Payments.txt", true);
+    	
     	for(int x = 0; x < propertyList.size(); x++)
     	{
     		for(int y = 0; y < propertyList.get(x).getPayments().size(); y++)
@@ -235,6 +234,7 @@ public class propertySystem extends Property
     			Payments.write(propertyList.get(x).getPayments().get(y).SaveOutput() + "\n");
     		}
     	}
+    	
     	Payments.flush();
     	Payments.close();	
     }

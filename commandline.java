@@ -1,4 +1,4 @@
-package project;
+
 /**
  * takes input from the user and outputs the required data.
  *
@@ -24,7 +24,7 @@ public class commandline extends propertySystem
    {
       in = new Scanner(System.in);
    }
-   /**
+	/**
     * runs commandline
  	*/
    public void run(propertySystem machine)
@@ -71,36 +71,36 @@ public class commandline extends propertySystem
     				  }
     				  else
     				  {
-    					  System.out.println("Error, invalid password");
+    					  System.out.println("Error, invalid Username");
     					  break;
     				  }
     			  }
     		  }
     	  }
-         System.out.println("command list: \n make payment \n add property \n my payments \n property payments \n owner payments \n overdue payments \n Area pay Statistics \n Test Tax Change \n Logout");
-         System.out.println("type help to show explanation of commands");
+         System.out.println("Command list: \n Make payment \n Add property \n My payments \n Property payments \n Owner payments \n overdue payments \n Area pay statistics \n Test tax change \n Logout");
+         System.out.println("type Help to show explanation of commands");
          input = in.nextLine();
          switch (input) 
          {
-           case "make payment":
+           case "Make payment":
         	   System.out.println("Enter amount");
         	   String payment = in.nextLine();
-        	   System.out.println("Enter Eircode of property you are paying for");
+        	   System.out.println("Enter Eircode or Address of property you are paying for");
         	   String Locator = in.nextLine();
         	   machine.pay(payment,Locator,name, propertyList);
            break;
            
-           case "add property":
+           case "Add property":
         		   System.out.println("Enter Address, Postcode, Estimated Market Value, Location, Private Residence(yes/no) and owner(s)");
             	   String property = in.nextLine();
             	   machine.addProperty(property, propertyList);
            break;
            
-           case "my payments":
+           case "My payments":
         	   machine.ownerPayments(name,propertyList);
            break;
            
-           case "property payments":
+           case "Property payments":
         	   if(name.equals("Admin"))
         	   {
         		   System.out.println("enter address or postcode");
@@ -114,7 +114,7 @@ public class commandline extends propertySystem
         	   }
            break;
            
-           case "owner payments":
+           case "Owner payments":
         	   if(name.equals("Admin"))
         	   {
         		   
@@ -128,11 +128,11 @@ public class commandline extends propertySystem
         	   }
            break;
            
-           case "overdue payments":
+           case "Overdue payments":
         	   machine.overDuePayments(propertyList);
            break;
            
-           case "Area Pay Statistics":
+           case "Area pay statistics":
         	   if(name.equals("Admin"))
         	   {
         		   System.out.println("enter Eircode");
@@ -146,7 +146,7 @@ public class commandline extends propertySystem
         	   }
            break;
            
-           case "Test Tax Change":
+           case "Test tax change":
         	   if(name.equals("Admin"))
         	   {
         		   
@@ -168,7 +168,7 @@ public class commandline extends propertySystem
                    
                    System.out.println("Get Changed Tax: input number of missed years, the estimated market value, the location and if it is a private residence(true/false). ");
                    String param = in.nextLine();
-                   String[] split2 = x.split(",");
+                   String[] split2 = param.split(",");
                    int one2 = Integer.parseInt(split2[0]);
                    double two2 = Double.parseDouble(split2[1]);
                    boolean three2 = Boolean.parseBoolean(split2[3]);
@@ -180,7 +180,7 @@ public class commandline extends propertySystem
         	   }
            break;
            
-           case "help":
+           case "Help":
            System.out.println("make payment: add a new payment");
            System.out.println("add property: add a new property (Admin Only)");
            System.out.println("my payments: View your payments");
