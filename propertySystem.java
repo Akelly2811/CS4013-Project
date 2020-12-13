@@ -1,33 +1,52 @@
+package project;
+/**
+ * holds some of the methods that commandline uses.
+ *
+ * 
+ */
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.io.*;
-public class propertySystem extends property3
+public class propertySystem extends Property
 {
     // instance variables - replace the example below with your own
-    ArrayList<property3> propertyList = new ArrayList<property3>();
     LocalDate myObj = LocalDate.now();
     propertyTax def = new propertyTax();
+    /**
+     * initalises defaults
+  	*/
     public propertySystem()
     {
     }
+    /**
+     * initialise local date
+  	*/
     public propertySystem(LocalDate a)
     {
         myObj = a;
     }
+    /**
+     * sets date
+  	*/
     public void setDate(LocalDate a)
     {
     	myObj = a;
     }
+    /**
+     * returns date
+  	*/
     public LocalDate getDate()
     {
     	return myObj;
     }
-     
-    public void pay(String payment,String locator, String name)
+    /**
+     * pays for property
+  	*/
+    public void pay(String payment,String locator, String name, ArrayList<Property> propertyList)
     {
       double ammount = Double.parseDouble(payment);
-      for (property3 p : propertyList)
+      for (Property p : propertyList)
       {
         if ((p.getAddress()).equals(locator)|| (p.getPostcode()).equals(locator))
         {
@@ -35,8 +54,10 @@ public class propertySystem extends property3
         }
        }
     }
-    
-    public void addProperty(String payment)
+    /**
+     * adds a property
+  	*/
+    public void addProperty(String payment, ArrayList<Property> propertyList )
     {
         String[] parts = payment.split(" ");
         String add = parts[0];
@@ -48,15 +69,17 @@ public class propertySystem extends property3
         if (PR.contains("y")){pr = true;}
         String owner = parts[5];
         double estMarketVal = Double.parseDouble(emv);
-        property3 prop = new property3(add, post, estMarketVal, loc, pr);
+        Property prop = new Property(add, post, estMarketVal, loc, pr);
         owners.add(owner);
         propertyList.add(prop);
         System.out.println("Test");
     }
-    
-    public void propertyPayments(String property)
+    /**
+     * returns the payments for a property
+  	*/
+    public void propertyPayments(String property, ArrayList<Property> propertyList)
     {
-    	for (property3 p : propertyList)
+    	for (Property p : propertyList)
     	{
     		if ((p.address.equals(property)) || (p.postcode.equals(property)))
     		{
@@ -64,23 +87,26 @@ public class propertySystem extends property3
     		}
     	}
     }
-    
-    public void ownerPayments(String owner)
+    /**
+     * returns the owners payments
+  	*/
+    public void ownerPayments(String owner, ArrayList<Property> propertyList)
     {
-    	for (property3 p : propertyList)
+    	for(int i = 0; i < propertyList.size(); i++)
     	{
-    		if (p.owners.contains(owner))
+    		if(propertyList.get(i).getOwner().equals(owner))
     		{
-    			System.out.println(p.payments);
-    			System.out.println("Success");
+    			System.out.println(propertyList.get(i).paymentsToString());
     		}
-    		System.out.println("uwu");
     	}
+    		    	
     }
-    
-    public void areaPayStatistics(String code)
+    /**
+     * returns payments based off postcode
+  	*/
+    public void areaPayStatistics(String code, ArrayList<Property> propertyList)
     {
-    	for (property3 p : propertyList)	
+    	for (Property p : propertyList)	
     	{
     		if(code.equals((p.postcode).substring(0,3)))
     		{
@@ -89,26 +115,32 @@ public class propertySystem extends property3
     		}
     	}
     }
-    
+    /**
+     * tests how different rates change the tax
+  	*/
     public void testTaxChange(double tax, double rate,double locationTax,double notPrinciple,double penalty)
     {
-    	propertyTax temp = new propertyTax(tax,rate,locationTax,notPrinciple,penalty);
+    	propertyTax temp = new propertyTax();
     }
-    
-    public void overDuePayments()
+    /**
+     * returns overdue payments
+  	*/
+    public void overDuePayments(ArrayList<Property> propertyList)
     {
-    	for (property3 p : propertyList)
+    	for (Property p : propertyList)
     	{
     		if (p.lastPayment.getYear() < myObj.getYear())
     		{
-    			for (Payment2 q : p.duePayments)
+    			for (Payment q : p.duePayments)
     			{
     				System.out.println(q.toString());
     			}
     		}
     	}
     }
-    
+    /**
+     * loads in users from a file
+  	*/
     public ArrayList<String> LoadUsers() throws IOException 
     {
     		ArrayList<String> temp = new ArrayList<String>();
@@ -127,10 +159,12 @@ public class propertySystem extends property3
     		in.close();
     		return temp;
     }
-    
-    public ArrayList<property3> LoadProperties() throws IOException
+    /**
+     * loads in properties from a file
+  	*/
+    public ArrayList<Property> LoadProperties() throws IOException
     {
-    	ArrayList<property3> temp = new ArrayList<property3>();
+    	ArrayList<Property> temp = new ArrayList<Property>();
     	File Input = new File("Properties.txt");
     	Scanner in = new Scanner(Input);
     	while(in.hasNextLine())
@@ -140,16 +174,17 @@ public class propertySystem extends property3
     		double y = Double.parseDouble(split[3]);
     		boolean t = Boolean.parseBoolean(split[5]);
     		int i = Integer.parseInt(split[6]);
-    		temp.add(new property3(split[1], split[2], y, split[4], t, i));
-    		owners.add(split[0]);
+    		temp.add(new Property(split[0], split[1], split[2], y, split[4], t, i));
     	}
     		in.close();
     		return temp;
     }
-    
-    public void LoadPayments() throws IOException
+    /**
+     * loads in payments from a file
+  	*/
+    public void LoadPayments(ArrayList<Property> propertyList) throws IOException
     {
-    	File Input = new File("Properties.txt");
+    	File Input = new File("Payments.txt");
     	Scanner in = new Scanner(Input);
     	while(in.hasNextLine())
     	{
@@ -157,22 +192,32 @@ public class propertySystem extends property3
     		String[] split = y.split(",");
     		double amount = Double.parseDouble(split[0]);
     		String owner = split[1];
-    		String Locator = split[3];
+    		String Locator = split[2];
     		LocalDate date = LocalDate.parse(split[3]);
     		boolean bool = Boolean.parseBoolean(split[4]);
     		for(int x = 0; x < propertyList.size(); x++)
     		{
-    			if(propertyList.get(x).getOwner().equals(owner) && ( propertyList.get(x).getAddress().equals(Locator) || propertyList.get(x).getPostcode().equals(Locator)))
+    			if(propertyList.get(x).getOwner().equals(owner) && propertyList.get(x).getAddress().equals(Locator))
     			{
-    				propertyList.get(x).getPayments().add(new Payment2(amount, owner, date, Locator, bool));
+    				System.out.println("Test");
+    				propertyList.get(x).getPayments().add(new Payment(amount, owner, date, Locator, bool));
+    				
     			}
+    			else if(propertyList.get(x).getOwner().equals(owner) && propertyList.get(x).getPostcode().equals(Locator))
+    			{
+    				System.out.println("Test");
+    				propertyList.get(x).getPayments().add(new Payment(amount, owner, date, Locator, bool));
+    			}
+
     		}
     		
     	}
     	in.close();
     }
-    
-    public void SaveData() throws IOException
+    /**
+     * saves data from properties and payments
+  	*/
+    public void SaveData(ArrayList<Property> propertyList) throws IOException
     {
     	FileWriter Properties = new FileWriter("Properties.txt", true);
     	for(int i = 0; i < propertyList.size(); i ++)
@@ -187,7 +232,7 @@ public class propertySystem extends property3
     	{
     		for(int y = 0; y < propertyList.get(x).getPayments().size(); y++)
     		{
-    			Payments.write(propertyList.get(x).getPayments().get(y).toString() + "\n");
+    			Payments.write(propertyList.get(x).getPayments().get(y).SaveOutput() + "\n");
     		}
     	}
     	Payments.flush();

@@ -1,10 +1,16 @@
+package project;
+/**
+ * runs the commandline.
+ *
+ * 
+ */
 import java.io.IOException;
 public class projectSimulation
 { 
    public static void main(String[] args) throws IOException
    {
 	   propertySystem machine = new propertySystem();
-	   commandline2 menu = new commandline2(1);
+	   commandline menu = new commandline(1);
 	   menu.run(machine);
   }
 }

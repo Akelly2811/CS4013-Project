@@ -3,10 +3,9 @@ package project;
 import java.util.ArrayList;
 
 /**
- * Write a description of class propertyTax here.
+ * Calculates property tax
  *
- * @author (your name)
- * @version (a version number or a date)
+ * 
  */
 
 public class propertyTax
@@ -16,30 +15,56 @@ public class propertyTax
     double locationTax;
     double notPrinciple = 0;
     double penalty = .07;
-    ArrayList<String> taxes = new ArrayList<String>();
- 
-    public propertyTax(double tax, double rate,double locationTax,double notPrinciple,double penalty)
+    double tax2 = 0;
+    double rate2 = 0;
+    double locationTax2;
+    double notPrinciple2 = 0;
+    double penalty2 = 0;
+    
+    /**
+    * initialise based off the values given
+ 	*/
+    public propertyTax(double tax, double rate,double locationTax,double notPrinciple,double penalty){
+        this.tax = tax;
+        this.rate = rate;
+        this.locationTax = locationTax;
+        this.notPrinciple = notPrinciple;
+        this.penalty = penalty;
+        }
+    /**
+    * Initialise default values
+ 	*/
+    public propertyTax()
     {
-        tax = 100;
-        rate = 0.04;
-        locationTax = 25;
-        notPrinciple = 0;
-        penalty = .07;
+        this.tax = 100;
+        this.rate = 0.04;
+        this.locationTax = 25;
+        this.notPrinciple = 0;
+        this.penalty = .07;
+        
     }
-    
-  
 
-public void setTax(double tax, double rate, double locationTax, double notPrinciple, double penalty) {
-	taxes.add(tax + "," + rate + "," + locationTax + "," + notPrinciple + "," + penalty);
+
+    /**
+    * set the tax rates
+ 	*/
+public void setTaxes(double tax, double rate, double locationTax, double notPrinciple, double penalty) {
+	this.tax2 = tax;
+    this.rate2 = rate;
+    this.locationTax2 = locationTax;
+    this.notPrinciple2 = notPrinciple;
+    this.penalty2 = penalty;
    }
-   
-public double getTaxes(int parse) {
-	String x = "";
-	String[] split = x.split(",");
-	double y = Double.parseDouble(split[parse]);
-	return y;
+	/**
+	 * returns the default tax rates
+	*/
+public String getTaxes() {
+	String back = tax + "," + rate + "," + locationTax + "," + notPrinciple + "," + penalty;
+    return back;
 }
-    
+	/**
+	 * returns the specified tax rates
+	*/
     public Payment getTax(int missedYears, double estMarketVal, String location, boolean privateResidence)
     {
         if(estMarketVal < 150000) {
@@ -63,4 +88,18 @@ public double getTaxes(int parse) {
         }
         return new Payment(tax*(penalty*missedYears), true);
     }
+    /**
+    * to string method
+ 	*/
+    @Override
+    public String toString() {
+        return "propertyTax{" +
+                "tax=" + tax +
+                ", rate=" + rate +
+                ", locationTax=" + locationTax +
+                ", notPrinciple=" + notPrinciple +
+                ", penalty=" + penalty +
+                '}';
+    }
+    
 }

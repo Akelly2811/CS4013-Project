@@ -1,41 +1,47 @@
 package project;
-
+/**
+ * takes input from the user and outputs the required data.
+ *
+ * 
+ */
 import java.util.Scanner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.time.LocalDate;
-/**
-   A menu from the vending machine.
-*/
+
 public class commandline extends propertySystem
 {    
    private Scanner in;
-   ArrayList<property> propertyList = new ArrayList<property>();
+   ArrayList<Property> propertyList = new ArrayList<Property>();
+   propertyTax propertyTax = new propertyTax();
    String input;
    String name;
    boolean loggedIn;
-   
+   /**
+    * runs scanner for commandline
+ 	*/
    public commandline(int ownerNumber)
    {
       in = new Scanner(System.in);
    }
-
+   /**
+    * runs commandline
+ 	*/
    public void run(propertySystem machine)
          throws IOException
    {
-	   LoadProperties();
-	   LoadPayments();
+	   propertyList = LoadProperties();
+	   LoadPayments(propertyList);
 	   ArrayList<String> Login = new ArrayList<String>();
 	   Login = LoadUsers();
 	   boolean more = true;
-	   System.out.println("Please enter your username or enter 'quit' to exit the program: ");
-		  String name = in.nextLine();
 	   while (more)
 	   { 
-		 
     	  while(!loggedIn)
     	  {
-    		  
+    		  System.out.println("Please enter your username or enter 'quit' to exit the program: ");
+    		  String name = in.nextLine();
+    		  this.name = name;
     		  if(name.equals("quit"))
     		  {
     			  more = false;
@@ -71,7 +77,7 @@ public class commandline extends propertySystem
     			  }
     		  }
     	  }
-         System.out.println("command list: \n make payment \n add property \n my payments \n property payments \n owner payments \n overdue payments \n Area pay Statistics \n Test Tax Changes \n Logout");
+         System.out.println("command list: \n make payment \n add property \n my payments \n property payments \n owner payments \n overdue payments \n Area pay Statistics \n Test Tax Change \n Logout");
          System.out.println("type help to show explanation of commands");
          input = in.nextLine();
          switch (input) 
@@ -81,72 +87,96 @@ public class commandline extends propertySystem
         	   String payment = in.nextLine();
         	   System.out.println("Enter Eircode of property you are paying for");
         	   String Locator = in.nextLine();
-        	   machine.pay(payment,Locator,name);
+        	   machine.pay(payment,Locator,name, propertyList);
            break;
            
            case "add property":
         		   System.out.println("Enter Address, Postcode, Estimated Market Value, Location, Private Residence(yes/no) and owner(s)");
             	   String property = in.nextLine();
-            	   machine.addProperty(property);
+            	   machine.addProperty(property, propertyList);
            break;
            
            case "my payments":
-        	   machine.ownerPayments(name);
+        	   machine.ownerPayments(name,propertyList);
            break;
            
            case "property payments":
-        	  if(!name.equals("Admin"))
+        	   if(name.equals("Admin"))
         	   {
-        		   System.out.println("You do not have Admin privileages, you cannot access this function");
-        	   }
-        	   else
-        	   { 
         		   System.out.println("enter address or postcode");
         		   String Property = in.nextLine();
         		   System.out.println(Property);
-        		   machine.propertyPayments(Property);
-        	  }
-           break;
-           
-           case "owner payments":
-        	   if(!name.equals("Admin"))
-        	   {
-        		   System.out.println("You do not have Admin privileages, you cannot access this function");
+        		   machine.propertyPayments(Property, propertyList);
         	   }
         	   else
         	   {
-        		   System.out.println("enter address or postcode");
+        		   System.out.println("You do not have Admin privileages, you cannot access this function");        		   
+        	   }
+           break;
+           
+           case "owner payments":
+        	   if(name.equals("Admin"))
+        	   {
+        		   
+        		   System.out.println("Enter owner Name");
         		   String owners = in.nextLine();  
-        		   machine.ownerPayments(owners);
+        		   machine.ownerPayments(owners,propertyList);
+        	   }
+        	   else
+        	   {
+        		   System.out.println("You do not have Admin privileages, you cannot access this function");
         	   }
            break;
            
            case "overdue payments":
-        	   machine.overDuePayments();
+        	   machine.overDuePayments(propertyList);
            break;
            
            case "Area Pay Statistics":
-        	   if(!name.equals("Admin"))
+        	   if(name.equals("Admin"))
         	   {
-        		   System.out.println("You do not have Admin privileages, you cannot access this function");
+        		   System.out.println("enter Eircode");
+        		   String areaCode = in.nextLine();
+        		   System.out.println(areaCode);
+        		   machine.areaPayStatistics(areaCode, propertyList);
         	   }
         	   else
         	   {
-        		   System.out.println("areaCode");
-        		   String areaCode = in.nextLine();
-        		   System.out.println(areaCode);
-        		   machine.areaPayStatistics(areaCode);
+        		   System.out.println("You do not have Admin privileages, you cannot access this function");
         	   }
            break;
            
            case "Test Tax Change":
-        	   if(!name.equals("Admin"))
+        	   if(name.equals("Admin"))
         	   {
-        		   System.out.println("You do not have Admin privileages, you cannot access this function");
+        		   
+        		   System.out.println("Input number to get current tax rates: \n 0:tax rate \n 1:rate \n 2:locationTax \n 3:notPrinciple \n 4:penalty");
+                   String taxChanges = in.nextLine();
+                   int y = Integer.parseInt(taxChanges);
+                   System.out.println(propertyTax.getTaxes());
+                   
+                   System.out.println("Input numbers to set current tax rates: tax rate locationTax notPrinciple penalty (seperate them with a comma; ',')");
+                   String x = in.nextLine();
+               	   String[] split = x.split(",");
+                   double one = Double.parseDouble(split[0]);
+                   double two = Double.parseDouble(split[1]);
+                   double three = Double.parseDouble(split[2]);
+                   double four = Double.parseDouble(split[3]);
+                   double five = Double.parseDouble(split[4]);
+                   propertyTax.setTaxes(one, two, three, four, five);
+                   System.out.println("Done");
+                   
+                   System.out.println("Get Changed Tax: input number of missed years, the estimated market value, the location and if it is a private residence(true/false). ");
+                   String param = in.nextLine();
+                   String[] split2 = x.split(",");
+                   int one2 = Integer.parseInt(split2[0]);
+                   double two2 = Double.parseDouble(split2[1]);
+                   boolean three2 = Boolean.parseBoolean(split2[3]);
+                   System.out.println(propertyTax.getTax(one2, two2, split2[2], three2));
         	   }
         	   else
         	   {
-        	
+        		   System.out.println("You do not have Admin privileages, you cannot access this function");
         	   }
            break;
            
@@ -163,7 +193,7 @@ public class commandline extends propertySystem
            break;
            
            case "Logout":
-        	   	SaveData();
+        	   	SaveData(propertyList);
            		System.out.println("Logging out, come back soon!");
            		more = false;
            break;

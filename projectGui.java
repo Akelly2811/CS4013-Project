@@ -22,7 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
 /**
-Project GUI.
+* Project GUI.
 */
 
 public class projectGui extends Application { 
@@ -31,12 +31,14 @@ public class projectGui extends Application {
    LocalDate myObj = LocalDate.now();
    static ArrayList<Property> propertyList = new ArrayList<Property>();
    ArrayList<propertyTax> propertyTax = new ArrayList<propertyTax>();
+   ArrayList<Property> temp = new ArrayList<Property>();
    String outputStr = "";
    Property property;
-   
+   /**
+   * imports the properies
+   */
    public void LoadProperties() throws IOException
    {
-   	ArrayList<Property> temp = new ArrayList<Property>();
    	File Input = new File("Properties.txt");
    	Scanner in = new Scanner(Input);
    	while(in.hasNextLine())
@@ -50,7 +52,9 @@ public class projectGui extends Application {
    	}
    		in.close();
    }
-   
+   /**
+   * holds the gui data
+   */
    public void start(Stage primaryStage) throws Exception {            
       //creating a Group object 
       Pane group = new Pane(); 
@@ -201,7 +205,7 @@ public class projectGui extends Application {
       buttonSelect.setPrefSize(100, 20);
       
       	/**
-      		Login Button
+      	* Login Button
       	*/
       	buttonLogin.setOnAction( new EventHandler<ActionEvent>() {
     	    public void handle(ActionEvent event2) {
@@ -229,7 +233,7 @@ public class projectGui extends Application {
       	});
       
       	/**
-  		Select Button
+  		* Select Button
       	*/
       	buttonSelect.setOnAction( new EventHandler<ActionEvent>() {
       	    public void handle(ActionEvent event) {
@@ -250,7 +254,7 @@ public class projectGui extends Application {
       	        		Txt1.setText("Routing Key:");
       	        		Txt1In.setPromptText("routing key");
       	        		group.getChildren().addAll(Txt1,Txt1In);
-      	        	}else if(comboBox.toLowerCase().equals("enter a different rate")) { double tax, double rate,double locationTax,double notPrinciple,double penalty
+      	        	}else if(comboBox.toLowerCase().equals("enter a different rate")) { //double tax, double rate,double locationTax,double notPrinciple,double penalty
       	        		Txt1.setText("Rate:");
       	        		Txt1In.setPromptText("rate");
       	        		group.getChildren().addAll(Txt1,Txt1In);
@@ -291,7 +295,7 @@ public class projectGui extends Application {
       	});
       	
       	/**
-  		Processes values
+  		* Processes values
       	*/
       	buttonDone.setOnAction( new EventHandler<ActionEvent>() {
       	    public void handle(ActionEvent event4) {
@@ -303,32 +307,40 @@ public class projectGui extends Application {
       	        		String payments = "";
       	        		for(int i = 0; i < array.size(); i++) {
       	        			String add = array.get(i).getAddress();
-      	        			owners = array.get(i).getOwner();
+      	        			owners = array.get(i).getOwnerArray();
       	        			if(add.equals(Txt1In.getText()) || owners.contains(Txt1In.getText())) {
-      	        				output.setText(propertyTax.get(i).toString());
+      	        				payments = propertyTax.get(i).toString();
       	        			}
       	        		}
       	        		output.setText(payments);
       	        	}else if(comboBox.toLowerCase().equals("overdue payments")) {
-      	        		ArrayList<Payment> overduePay = new ArrayList<>();
+      	        		ArrayList<String> overduePay = new ArrayList<>();
+      	        		ArrayList<String> propertyListOverdue = new ArrayList<>();
+      	        		for(int i = 0; i < temp.size(); i++) {
+      	        			if(temp.get(i).getPayments().get(i).isDue() == true && Txt1In.getText().equals(propertyList.get(i).getPostcode())) {
+      	        				overduePay.add("Due");
+      	        				propertyListOverdue.add(propertyList.get(i).getPostcode());
+      	        			}
+      	        		}
       	        		String overdue = "";
       	        		for (int i = 0; i < overduePay.size(); i++) {
-      	        			overdue = overdue + overduePay.get(i);
+      	        			overdue = overdue + propertyListOverdue.get(i) + "|" + overduePay.get(i);
       	        		}
       	        		output.setText(overdue);
       	        	}else if(comboBox.toLowerCase().equals("area pay statistics")) {
       	        		String back = areaPayStatistics(Txt1In.getText());
       	        		output.setText(back);
       	        	}else if(comboBox.toLowerCase().equals("enter a different rate")) {
-      	        		compare old tax with new tax
+      	        		//compare old tax with new tax
       	        	}
       	        }else {
       	        	String comboBox = (String) comboBox_1.getValue();
       	        	if(comboBox.toLowerCase().equals("make payment")) {
       	        		String address = Txt1In.getText();
       	        		String amount = Txt2In.getText();
-      	        		property.pay(address, amount);
-      	        		help.setText("Done");
+      	        		double amountDob = Double.parseDouble(amount);
+      	        		property.pay(amountDob, address);
+      	        		help.setText("made payment");
       	        	}else if(comboBox.toLowerCase().equals("add property")) {
       	        		String check1 = "";
       	        		if(check.isSelected()) {
@@ -341,12 +353,12 @@ public class projectGui extends Application {
       	        		propertyTax tax = new propertyTax();
       	        		propertyList.add(property);
       	        		propertyTax.add(tax);
-      	        		help.setText("Done");
+      	        		help.setText("added a property and added tax");
       	        	}else if(comboBox.toLowerCase().equals("my payments")) {
       	        		ArrayList<Property> array = propertyList;
       	        		String payments = "";
       	        		for(int i = 0; i < array.size(); i++) {
-      	        			ArrayList<String> prop = array.get(i).getOwner();
+      	        			ArrayList<String> prop = array.get(i).getOwnerArray();
       	        			if(prop.contains(name.getText())) {
       	        				payments = "Payments: \n" + array.get(i).paymentsToString();
       	        			}
@@ -369,7 +381,7 @@ public class projectGui extends Application {
       	});
       	
       	/**
-  		Clears the TextFields
+  		* Clears the TextFields
       	*/
       	buttonClear.setOnAction( new EventHandler<ActionEvent>() {
       	    public void handle(ActionEvent event3) {
@@ -394,7 +406,9 @@ public class projectGui extends Application {
       	//Displaying the contents of the stage 
       	primaryStage.show(); 
    }
-   
+   /**
+	* returns payments for properties
+ 	*/
    public String getPropertyPayments(String property){
    		ArrayList<Payment> pay = new ArrayList<>();
    		String back = "";
@@ -406,7 +420,9 @@ public class projectGui extends Application {
    		}
    		return back;
    }
-   
+   /**
+    * returns payments for owners
+ 	*/
    public String getOwnerPayments(String owner){
 	   	ArrayList<Payment> pay = new ArrayList<>();
    		String back = "";
@@ -418,18 +434,9 @@ public class projectGui extends Application {
    		}
    		return back;
    }
-   public ArrayList<Payment> overDuePayments(){
-	   ArrayList<Payment> overdue = new ArrayList<>();
-   	for (Property p : propertyList){
-   		if (p.lastPayment.getYear() < myObj.getYear()){
-   			for (Payment q : p.duePayments){
-   				overdue.add(q);
-   			}
-   		}
-   	}
-   	return overdue;
-   }
-   
+   /**
+   * returns payments based of postcode
+	*/
    public String areaPayStatistics(String code){
 	   ArrayList<Property> stats = new ArrayList<>();
 	   String statsStr = "";
@@ -443,11 +450,15 @@ public class projectGui extends Application {
 	    }
 	    return statsStr;
    }
-   
-   public void testTaxChange(double tax, double rate,double locationTax,double notPrinciple,double penalty){ do this
+   /**
+   * tests a different rate of tax
+	*/
+   public void testTaxChange(double tax, double rate,double locationTax,double notPrinciple,double penalty){ 
    		propertyTax temp = new propertyTax(tax,rate,locationTax,notPrinciple,penalty);
    }
-   
+   /**
+   * launches the GUI.
+	*/
    public static void main(String args[]){          
 	   launch(args);     
    }         
